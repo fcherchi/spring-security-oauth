@@ -1,7 +1,5 @@
 package org.baeldung.config;
 
-import java.io.IOException;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,13 +14,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.RemoteTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
+import java.io.IOException;
+
 @Configuration
-@PropertySource({ "classpath:persistence.properties" })
+@PropertySource({"classpath:persistence.properties"})
 @EnableResourceServer
 public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
@@ -34,25 +34,25 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
     @Override
     public void configure(final HttpSecurity http) throws Exception {
         // @formatter:off
-		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().authorizeRequests()
-				.anyRequest().authenticated();
-		// .requestMatchers().antMatchers("/foos/**","/bars/**")
-		// .and()
-		// .authorizeRequests()
-		// .antMatchers(HttpMethod.GET,"/foos/**").access("#oauth2.hasScope('foo')
-		// and #oauth2.hasScope('read')")
-		// .antMatchers(HttpMethod.POST,"/foos/**").access("#oauth2.hasScope('foo')
-		// and #oauth2.hasScope('write')")
-		// .antMatchers(HttpMethod.GET,"/bars/**").access("#oauth2.hasScope('bar')
-		// and #oauth2.hasScope('read')")
-		// .antMatchers(HttpMethod.POST,"/bars/**").access("#oauth2.hasScope('bar')
-		// and #oauth2.hasScope('write') and hasRole('ROLE_ADMIN')")
-		;
-		// @formatter:on
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED).and().authorizeRequests()
+                .anyRequest().authenticated();
+        // .requestMatchers().antMatchers("/foos/**","/bars/**")
+        // .and()
+        // .authorizeRequests()
+        // .antMatchers(HttpMethod.GET,"/foos/**").access("#oauth2.hasScope('foo')
+        // and #oauth2.hasScope('read')")
+        // .antMatchers(HttpMethod.POST,"/foos/**").access("#oauth2.hasScope('foo')
+        // and #oauth2.hasScope('write')")
+        // .antMatchers(HttpMethod.GET,"/bars/**").access("#oauth2.hasScope('bar')
+        // and #oauth2.hasScope('read')")
+        // .antMatchers(HttpMethod.POST,"/bars/**").access("#oauth2.hasScope('bar')
+        // and #oauth2.hasScope('write') and hasRole('ROLE_ADMIN')")
+        ;
+        // @formatter:on
     }
 
     // Remote token service
-    /*
+
     @Primary
     @Bean
     public RemoteTokenServices tokenService() {
@@ -62,13 +62,13 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         tokenService.setClientSecret("secret");
         return tokenService;
     }
-    */
+
 
     // JWT token store
 
     @Override
     public void configure(final ResourceServerSecurityConfigurer config) {
-        config.tokenServices(tokenServices());
+        config.tokenServices(tokenService());
     }
 
     @Bean
@@ -91,26 +91,32 @@ public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
         return converter;
     }
 
-    @Bean
-    @Primary
-    public DefaultTokenServices tokenServices() {
-        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
-        defaultTokenServices.setTokenStore(tokenStore());
-        return defaultTokenServices;
-    }
+//    @Bean
+//    @Primary
+//    public DefaultTokenServices tokenServices() {
+//        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+//        defaultTokenServices.setTokenStore(tokenStore());
+//        return defaultTokenServices;
+//    }
 
     // JDBC token store configuration
 
-    /*
-     * @Bean public DataSource dataSource() { final DriverManagerDataSource
-     * dataSource = new DriverManagerDataSource();
-     * dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-     * dataSource.setUrl(env.getProperty("jdbc.url"));
-     * dataSource.setUsername(env.getProperty("jdbc.user"));
-     * dataSource.setPassword(env.getProperty("jdbc.pass")); return dataSource;
-     * }
-     *
-     * @Bean public TokenStore tokenStore() { return new
-     * JdbcTokenStore(dataSource()); }
-     */
+
+//    @Bean
+//    public DataSource dataSource() {
+//        final DriverManagerDataSource
+//                dataSource = new DriverManagerDataSource();
+//        dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
+//        dataSource.setUrl(env.getProperty("jdbc.url"));
+//        dataSource.setUsername(env.getProperty("jdbc.user"));
+//        dataSource.setPassword(env.getProperty("jdbc.pass"));
+//        return dataSource;
+//    }
+
+//    @Bean
+//    public TokenStore tokenStore() {
+//        return new
+//                JdbcTokenStore(dataSource());
+//    }
+
 }
